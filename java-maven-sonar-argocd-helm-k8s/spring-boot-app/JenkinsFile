@@ -9,7 +9,7 @@ pipeline {
     stage('Checkout') {
       steps {
         sh 'echo passed'
-        //git branch: 'master', url: 'https://github.com/devops-CloudComputing/ultimate-cicd-pipeline-jenkins-ArgoCD-K8s.git'
+        //git branch: 'master', url: 'https://github.com/vaibhavkarade/argocd-project.git/'
       }
     }
     stage('Build and Test') {
@@ -21,7 +21,7 @@ pipeline {
     }
     stage('Static Code Analysis') {
       environment {
-        SONAR_URL = "http://52.214.1.252/:9000"
+        SONAR_URL = "http://13.72.104.241:9000/"
       }
       steps {
         withCredentials([string(credentialsId: 'sonarqube', variable: 'SONAR_AUTH_TOKEN')]) {
@@ -31,7 +31,7 @@ pipeline {
     }
     stage('Build and Push Docker Image') {
       environment {
-        DOCKER_IMAGE = "ghazanfardocker/ultimate-cicd:${BUILD_NUMBER}"
+        DOCKER_IMAGE = "vaibhavkarade/ultimate-cicd:${BUILD_NUMBER}"
         // DOCKERFILE_LOCATION = "java-maven-sonar-argocd-helm-k8s/spring-boot-app/Dockerfile"
         REGISTRY_CREDENTIALS = credentials('docker-cred')
       }
@@ -47,14 +47,14 @@ pipeline {
     }
     stage('Update Deployment File') {
         environment {
-            GIT_REPO_NAME = "ultimate-cicd-pipeline-jenkins-ArgoCD-K8s"
-            GIT_USER_NAME = "devops-CloudComputing"
+            GIT_REPO_NAME = "argocd-project"
+            GIT_USER_NAME = "vaibhavkarade"
         }
         steps {
             withCredentials([string(credentialsId: 'github', variable: 'GITHUB_TOKEN')]) {
                 sh '''
-                    git config user.email "ghazanfarali9595@gmail.com"
-                    git config user.name "Ghazanfar Ali"
+                    git config user.email "vaibhavkarade42@gmail.com"
+                    git config user.name "vaibhavkarade"
                     BUILD_NUMBER=${BUILD_NUMBER}
                     sed -i "s/replaceImageTag/${BUILD_NUMBER}/g" java-maven-sonar-argocd-helm-k8s/spring-boot-app-manifests/deployment.yml
                     git add java-maven-sonar-argocd-helm-k8s/spring-boot-app-manifests/deployment.yml
